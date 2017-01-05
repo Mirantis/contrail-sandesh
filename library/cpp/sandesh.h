@@ -122,6 +122,21 @@ class SandeshMessageBasicStats;
 class SandeshConnection;
 class SandeshRequest;
 
+struct SandeshConfig {
+    std::string keyfile;
+    std::string certfile;
+    std::string ca_cert;
+    bool sandesh_ssl_enable;
+    bool introspect_ssl_enable;
+
+    explicit SandeshConfig()
+        : keyfile(), certfile(), ca_cert(), sandesh_ssl_enable(false),
+          introspect_ssl_enable(false) {
+    }
+    ~SandeshConfig() {
+    }
+};
+
 struct SandeshElement;
 
 class Sandesh {
@@ -144,6 +159,8 @@ public:
     typedef boost::tuple<size_t, SandeshLevel::type, bool, bool> QueueWaterMarkInfo;
     typedef boost::function<void (std::string serviceName, uint8_t numbOfInstances,
             DiscoveryServiceClient::ServiceHandler)> CollectorSubFn;
+    typedef std::map<std::string, std::map<std::string,std::string> > DerivedStats;
+
     // Initialization APIs
     static bool InitGenerator(const std::string &module,
             const std::string &source,
@@ -154,8 +171,8 @@ public:
             CollectorSubFn csf,
             const std::vector<std::string> &collectors,
             SandeshContext *client_context = NULL,
-            std::map<std::string, std::map<std::string,std::string> > ds = 
-                std::map<std::string, std::map<std::string,std::string> >());
+            DerivedStats ds = DerivedStats(),
+            const SandeshConfig &config = SandeshConfig());
     static bool InitGenerator(const std::string &module,
             const std::string &source, 
             const std::string &node_type,
@@ -163,8 +180,8 @@ public:
             EventManager *evm,
             unsigned short http_port,
             SandeshContext *client_context = NULL,
-            std::map<std::string, std::map<std::string,std::string> > ds = 
-                std::map<std::string, std::map<std::string,std::string> >());
+            DerivedStats ds = DerivedStats(),
+            const SandeshConfig &config = SandeshConfig());
     static void RecordPort(const std::string& name, const std::string& module,
             unsigned short port);
     // Collector
@@ -175,7 +192,8 @@ public:
             EventManager *evm,
             const std::string &collector_ip, int collector_port,
             unsigned short http_port,
-            SandeshContext *client_context = NULL);
+            SandeshContext *client_context = NULL,
+            const SandeshConfig &config = SandeshConfig());
     // Test
     static bool InitGeneratorTest(const std::string &module,
             const std::string &source,
@@ -183,7 +201,8 @@ public:
             const std::string &instance_id, 
             EventManager *evm,
             unsigned short http_port,
-            SandeshContext *client_context = NULL);
+            SandeshContext *client_context = NULL,
+            const SandeshConfig &config = SandeshConfig());
     static bool ConnectToCollector(const std::string &collector_ip,
             int collector_port, bool periodicuve = false);
     static void Uninit();
@@ -372,7 +391,8 @@ private:
             const std::string &instance_id,
             EventManager *evm,
             unsigned short http_port,
-            SandeshContext *client_context = NULL);
+            SandeshContext *client_context = NULL,
+            const SandeshConfig &config = SandeshConfig());
 
     static SandeshRole::type role_;
     static std::string module_;
