@@ -73,6 +73,7 @@ extern int vrouter_dbg;
 #define os_log(level, format, arg...)    syslog(level, format, ##arg)
 #endif /* __KERNEL__ */
 
+#define uuid_t fix_for_4_13_kernel
 typedef unsigned char uuid_t[16];
 
 typedef struct ipaddr_s {
