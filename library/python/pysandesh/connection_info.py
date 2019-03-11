@@ -109,6 +109,13 @@ class ConnectionState(object):
 		return
         ConnectionState._connection_map[conn_key] = conn_info
         ConnectionState._send_uve()
+
+        # PROD-24894
+        if ConnectionState._table == 'ObjectConfigNode':
+            ConnectionState._table = 'ObjectDatabaseInfo'
+            ConnectionState._send_uve()
+            ConnectionState._table = 'ObjectConfigNode'
+
     #end update
 
     @staticmethod
